@@ -1,0 +1,43 @@
+game(id:APITest){
+
+    /* Test game for DGDL/AIFdb integration */
+
+    roles(Person)
+    participants(min:2, max:undefined)
+    player(id:Agent, roles:{Person}, min:1, max:1)
+    player(id:User, roles:{Person}, min:1, max:1)
+
+    turntaking(strict)
+    backtracking(on)
+
+    rule(id:StartingRule, scope:initial){
+        assign(Agent, speaker);
+        move(add, next, Present, $User, {p}, Agent);
+    }
+
+    interaction(id:Present, addressee:User, content:{p}, opener:"Argument: $p") {
+        assign(User, speaker);
+        move(add, next, Why, $Agent, {p}, User);
+    }
+
+    interaction(id:Why, addressee:Agent, content:{p}, opener:"Why?"){
+        assign(Agent, speaker);
+        move(add, next, Source, $User, {p, q}, Agent);
+    }
+
+    interaction(id:Source, addressee:User, content:{p, q}, opener:"$p because $q"){
+        assign(User, speaker);
+        move(add, next, WhyPremise, $Agent, {q}, User);
+    }
+
+    interaction(id:WhyPremise, addressee:Agent, content:{q}, opener:"Why $q?"){
+        assign(Agent, speaker);
+        move(add, next, SourcePremise, $User, {q, r}, Agent);
+    }
+
+    interaction(id:SourcePremise, addressee:User, content:{q, r}, opener:"$q because $r"){
+        assign(Agent, speaker);
+        move(add, next, Present, $User, {p}, Agent);
+    }
+
+}

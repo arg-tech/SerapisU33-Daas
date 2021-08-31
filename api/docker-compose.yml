@@ -1,0 +1,18 @@
+version: '2'
+services:
+  middleware:
+    build: .
+    ports:
+      - "8075:8075"
+    links:
+      - mongo
+  mongo:
+    container_name: mongo_daas
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb:/data/db
+
+volumes:
+  mongodb:
